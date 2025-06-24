@@ -15,7 +15,6 @@ class BaseEntity():
         return uuid.uuid4()   
     
 class Obra(BaseEntity):
-
     def __init__(self, titulo, autor, ano, categoria):
         super().__init__()
         self.titulo = titulo
