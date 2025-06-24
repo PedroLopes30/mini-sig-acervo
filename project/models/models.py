@@ -15,7 +15,6 @@ class BaseEntity():
         return uuid.uuid4()   
     
 class Obra(BaseEntity):
-
     def __init__(self, titulo, autor, ano, categoria):
         self.titulo = titulo
         self.autor = autor
@@ -26,6 +25,7 @@ class Obra(BaseEntity):
     def disponivel(self, estoque):
         if estoque >= 1:
             return True
+        return False
         
     def __str__(self):
         return f"{self.titulo} ({self.ano})."  
