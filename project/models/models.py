@@ -9,7 +9,7 @@ class BaseEntity():
         self.creation_date = datetime.date.today()
 
     def __eq__(self, other):
-        return self == other and self.id == other.id
+        return id(self) == id(other) and self.id == other.id
 
     def _gerar_id(self):
         return uuid.uuid4()   
