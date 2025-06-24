@@ -13,31 +13,52 @@ class BaseEntity():
 
     def _gerar_id(self):
         return uuid.uuid4()
+    
+class Obra():
+    pass
+
+class Usuario():
+    pass
+
+class Emprestimo():
+    pass
 
 class Acervo():
     def __init__(self):
-        pass
+        self.acervo = {}
 
     def __iadd__(self, obra:Obra):
-        pass
+        if obra in self.acervo:
+            self.acervo[obra] += 1
+            return self.acervo
+
+        self.adicionar(obra)
+        return self.acervo
 
     def __isub__(self, obra:Obra):
-        pass
+        if obra in self.acervo:
+            if self.acervo.obra > 1:
+                self.acervo[obra] -= 1
+                return self.acervo
+            self.remover(obra)
+    
+        return "Não contém essa obra no acervo"
     
     def adicionar(self, obra):
-        pass
+        self.acervo[obra] = 1
 
     def remover(self, obra):
-        pass
+        del self.acervo[obra]
 
     def emprestar(self, obra, usuario, dias=7):
-        pass
+        pass 
 
     def devolver(self, emprestimo, data_dev):
         pass
 
     def renovar(self, emprestimo, dias_extra):
         pass
+
     def relatorio_inventario(self, emprestimo, data_ref):
         pass
 
