@@ -29,3 +29,15 @@ class Obra(BaseEntity):
         
     def __str__(self):
         return f"{self.titulo} ({self.ano})."  
+
+class Usuario(BaseEntity):
+    
+    def __init__(self, nome, email):
+        self.nome = nome
+        self.email = email
+
+    def __lt__(self, other):
+        return self.nome.lower() < other.nome.lower()
+
+    def __str__(self):
+        return f"{self.nome}"     
