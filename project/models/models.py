@@ -17,6 +17,7 @@ class BaseEntity():
 class Obra(BaseEntity):
 
     def __init__(self, titulo, autor, ano, categoria):
+        super().__init__()
         self.titulo = titulo
         self.autor = autor
         self.ano = ano
@@ -24,8 +25,7 @@ class Obra(BaseEntity):
         self.quantidade = 1
 
     def disponivel(self, estoque):
-        if estoque >= 1:
-            return True
+        return estoque >= 1
         
     def __str__(self):
         return f"{self.titulo} ({self.ano})."  
@@ -33,6 +33,7 @@ class Obra(BaseEntity):
 class Usuario(BaseEntity):
     
     def __init__(self, nome, email):
+        super().__init__()
         self.nome = nome
         self.email = email
 
@@ -45,6 +46,7 @@ class Usuario(BaseEntity):
 class Emprestimo(BaseEntity):
 
     def __init__(self, obra, usuario):
+        super().__init__()
         self.obra = obra
         self.usuario = usuario
         self.data_retirada = datetime.date.today()
