@@ -94,12 +94,13 @@ class Acervo:
 
     def __isub__(self, obra:Obra):
         obra_acervo = self.__verificar_obra(obra)
-        if obra_acervo["estoque"] >= 1:
-            if obra_acervo["estoque"] == 1:
-                self.remover(obra_acervo)
-            else:
-                obra_acervo["estoque"] -=1
-            obra.quantidade += 1
+        if obra_acervo:
+            if obra_acervo["estoque"] >= 1:
+                if obra_acervo["estoque"] == 1:
+                    self.remover(obra_acervo)
+                else:
+                    obra_acervo["estoque"] -=1
+                obra.quantidade += 1
         return self.acervo
     
     def adicionar(self, obra):
