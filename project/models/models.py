@@ -24,7 +24,9 @@ class Obra(BaseEntity):
         self.quantidade = 1
 
     def disponivel(self, estoque):
-        return estoque >= 1
+        for obra_acervo in estoque:
+            if obra_acervo["obra"].__eq__(self): return True
+        return False
         
     def __str__(self):
         return f"{self.titulo} ({self.ano})."  
@@ -66,3 +68,44 @@ class Emprestimo(BaseEntity):
     
     def __str__(self):
         return f"-> {self.obra.titulo} - Data de retirada: {self.data_retirada}\n - Data prevista de devolução: {self.data_prev_devol}\n - Usuário: {self.usuario.nome}"
+    
+class Acervo:
+    def __init__(self):
+        self.acervo = [] # Estrutura: {"obra": obra, "estoque": estoque}
+
+    def __verificar_obra(self, obra):
+        if obra.disponivel(self.acervo):
+            for obra_acervo in self.acervo:
+                if obra_acervo["obra"].__eq__(obra):
+                    return obra_acervo
+        return False
+
+    def __iadd__(self, obra:Obra):
+        obra_acervo = self.__verificar_obra(obra)
+        if obra_acervo:
+            if obra.quantidade >= 1:
+                obra.quantidade -= 1
+                obra_acervo["estoque"] +=1
+                return self.acervo
+            return "Sem obra disponível."
+        
+        self.adicionar(obra)
+        return self.acervo
+
+    def __isub__(self, obra:Obra):
+        obra_acervo = self.__verificar_obra(obra)
+        if obra_acervo["estoque"] >= 1:
+            if obra_acervo["estoque"] == 1:
+                self.remover(obra_acervo)
+            else:
+                obra_acervo["estoque"] -=1
+            obra.quantidade += 1
+        return self.acervo
+    
+    def adicionar(self, obra):
+        if obra.quantidade >= 1:
+            self.acervo.append({"obra": obra, "estoque": 1})
+            obra.quantidade -= 1
+
+    def remover(self, obra_acervo):
+        self.acervo.remove(obra_acervo)
