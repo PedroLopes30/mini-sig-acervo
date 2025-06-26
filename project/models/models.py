@@ -72,6 +72,7 @@ class Emprestimo(BaseEntity):
 class Acervo:
     def __init__(self):
         self.acervo = [] # Estrutura: {"obra": obra, "estoque": estoque}
+        self.__emprestimos = []
 
     def __verificar_obra(self, obra):
         if obra.disponivel(self.acervo):
@@ -109,3 +110,12 @@ class Acervo:
 
     def remover(self, obra_acervo):
         self.acervo.remove(obra_acervo)
+
+    def emprestar(self, obra, usuario, dias=7):
+        if obra.disponivel(self.acervo):
+            self.__isub__(obra)
+            emprestimo = Emprestimo(obra, usuario)
+            emprestimo.marcar_devolucao(dias)
+            self.__emprestimos.append(emprestimo)
+            return emprestimo
+        raise ValueError("Sem estoque da obra.")
