@@ -72,7 +72,7 @@ class Emprestimo(BaseEntity):
 class Acervo:
     def __init__(self):
         self.acervo = [] # Estrutura: {"obra": obra, "estoque": estoque}
-        
+
     def __verificar_obra(self, obra):
         if obra.disponivel(self.acervo):
             for obra_acervo in self.acervo:
@@ -113,7 +113,30 @@ class Acervo:
     def emprestar(self, obra, usuario, dias=7):
         if obra.disponivel(self.acervo):
             self.__isub__(obra)
+            obra.quantidade -= 1
             emprestimo = Emprestimo(obra, usuario)
             emprestimo.marcar_devolucao(dias)
             return emprestimo
         raise ValueError("Sem estoque da obra.")
+    
+    def devolver(self, emprestimo, data_dev=datetime.date.today()):
+        data_dev = datetime.datetime.strptime(data_dev, "%Y-%m-%d").date()
+        valor_multa = self.valor_multa(emprestimo, data_dev)
+        if valor_multa:
+            print(f"Sua multa é de R${valor_multa} pelo atraso.")
+        print("Obrigado pela devolução!")
+        
+        self.__iadd__(emprestimo.obra)
+        return
+
+    def renovar(self, emprestimo, dias_extras):
+        dias = ((emprestimo.data_prev_devol - emprestimo.data_retirada).days + dias_extras)
+        emprestimo.marcar_devolucao(dias)
+        
+    def valor_multa(self, emprestimo, data_ref):
+        atraso = emprestimo.dias_atraso(data_ref)     
+        if atraso > 0: 
+            return float(atraso * 1)
+        return 
+            
+
