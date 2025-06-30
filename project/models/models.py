@@ -1,6 +1,8 @@
 # Imports
 import uuid
 import datetime
+from rich.table import Table
+from rich.console import Console
 
 # Classes
 class BaseEntity():
@@ -80,19 +82,19 @@ class Acervo:
                     return obra_acervo
         return False
 
-    def __iadd__(self, obra:Obra):
+    def __iadd__(self, obra):
         obra_acervo = self.__verificar_obra(obra)
         if obra_acervo:
             if obra.quantidade >= 1:
                 obra.quantidade -= 1
                 obra_acervo["estoque"] +=1
-                return self.acervo
+                return self
             return "Sem obra disponível."
         
         self.adicionar(obra)
-        return self.acervo
+        return self
 
-    def __isub__(self, obra:Obra):
+    def __isub__(self, obra):
         obra_acervo = self.__verificar_obra(obra)
         if obra_acervo:
             if obra_acervo["estoque"] >= 1:
@@ -101,7 +103,7 @@ class Acervo:
                 else:
                     obra_acervo["estoque"] -=1
                 obra.quantidade += 1
-        return self.acervo
+        return self
     
     def adicionar(self, obra):
         if obra.quantidade >= 1:
@@ -139,5 +141,24 @@ class Acervo:
         if atraso > 0: 
             return float(atraso * 1)
         return 
-            
+
+    def relatorio_inventario(self):
+        # Criação tabela
+        table = Table(title="Obras", show_lines=True)
+
+        # Criação colunas
+        table.add_column("Obra", justify="left", style="white", no_wrap=True)
+        table.add_column("Autor", justify="left", style="yellow", no_wrap=True)
+        table.add_column("Ano", justify="left", style="green", no_wrap=True)
+        table.add_column("Categoria", justify="left", style="cyan", no_wrap=True)
+        table.add_column("Estoque do Acervo", justify="left", style="red", no_wrap=True)
+
+        # Criação linhas
+        for obra_acervo in self.acervo:
+            obra = obra_acervo["obra"]
+            table.add_row(obra.titulo, obra.autor, str(obra.ano), obra.categoria, str(obra_acervo["estoque"]))
+
+        return table
+
+
 
