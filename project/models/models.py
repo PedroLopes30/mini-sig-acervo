@@ -18,9 +18,9 @@ class BaseEntity:
             other (BaseEntity): Outra entidade para comparar.
 
         Returns:
-            bool: True se forem o mesmo objeto e IDs iguais.
+            bool: True se forem da mesma classe e IDs iguais.
         """
-        return id(self) == id(other) and self.id == other.id
+        return self.__class__ == other.__class__ and self.id == other.id
 
     def _gerar_id(self):
         """Gera um ID único.
