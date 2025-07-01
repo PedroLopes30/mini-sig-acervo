@@ -77,6 +77,8 @@ class Acervo:
         self.__emprestimos = []
 
     def __verificar_obra(self, obra):
+        self.__valida_obra(obra)
+
         if obra.disponivel(self.acervo):
             for obra_acervo in self.acervo:
                 if obra_acervo["obra"].__eq__(obra):
@@ -115,6 +117,7 @@ class Acervo:
         self.acervo.remove(obra_acervo)
 
     def emprestar(self, obra, usuario, dias=7):
+        self.__valida_obra(obra)
         if obra.disponivel(self.acervo):
             self -= obra
             obra.quantidade -= 1
@@ -195,3 +198,8 @@ class Acervo:
                 table.add_row(usuario.nome, emprestimo.obra.titulo, str(emprestimo.data_retirada))
         
         return table
+
+    def __valida_obra(self, obra):
+        if not isinstance(obra, Obra):
+            raise TypeError("Esse objeto não pertence a classe Obra.")
+        return
