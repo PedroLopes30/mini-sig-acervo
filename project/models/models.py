@@ -17,13 +17,13 @@ class BaseEntity():
         return uuid.uuid4()   
     
 class Obra(BaseEntity):
-    def __init__(self, titulo, autor, ano, categoria):
+    def __init__(self, titulo, autor, ano, categoria, quantidade=1):
         super().__init__()
         self.titulo = titulo
         self.autor = autor
         self.ano = ano
         self.categoria = categoria
-        self.quantidade = 1
+        self.quantidade = quantidade
 
     def disponivel(self, estoque):
         for obra_acervo in estoque:
@@ -74,6 +74,7 @@ class Emprestimo(BaseEntity):
 class Acervo:
     def __init__(self):
         self.acervo = [] # Estrutura: {"obra": obra, "estoque": estoque}
+        self.__emprestimos = []
 
     def __verificar_obra(self, obra):
         if obra.disponivel(self.acervo):
@@ -115,14 +116,15 @@ class Acervo:
 
     def emprestar(self, obra, usuario, dias=7):
         if obra.disponivel(self.acervo):
-            self.__isub__(obra)
+            self -= obra
             obra.quantidade -= 1
             emprestimo = Emprestimo(obra, usuario)
             emprestimo.marcar_devolucao(dias)
+            self.__emprestimos.append(emprestimo)
             return emprestimo
         raise ValueError("Sem estoque da obra.")
     
-    def devolver(self, emprestimo, data_dev=datetime.date.today()):
+    def devolver(self, emprestimo, data_dev):
         data_dev = datetime.datetime.strptime(data_dev, "%Y-%m-%d").date()
         valor_multa = self.valor_multa(emprestimo, data_dev)
         if valor_multa:
@@ -130,6 +132,8 @@ class Acervo:
         print("Obrigado pela devolução!")
         
         self.__iadd__(emprestimo.obra)
+        self.__emprestimos.remove(emprestimo)
+
         return
 
     def renovar(self, emprestimo, dias_extras):
@@ -160,5 +164,34 @@ class Acervo:
 
         return table
 
+    def relatorio_debito(self):
+        # Criação tabela
+        table = Table(title="Débitos", show_lines=True)
 
+        # Criação colunas
+        table.add_column("Usuário", justify="left", style="white", no_wrap=True)
+        table.add_column("Obra", justify="left", style="cyan", no_wrap=True)
+        table.add_column("Multa", justify="left", style="red", no_wrap=True)
 
+        # Criação linhas
+        for emprestimo in self.__emprestimos:
+            if self.valor_multa(emprestimo, datetime.date.today()):
+                table.add_row(emprestimo.usuario.nome, emprestimo.obra.titulo, f"R$ {str(self.valor_multa(emprestimo, datetime.date.today()))}")
+
+        return table
+
+    def historico_usuario(self, usuario):
+        # Criação tabela
+        table = Table(title=f"Histórico de {usuario.nome}", show_lines=True)
+
+        # Criação colunas
+        table.add_column("Usuário", justify="left", style="white", no_wrap=True)
+        table.add_column("Obra", justify="left", style="cyan", no_wrap=True)
+        table.add_column("Data de Retirada", justify="left", style="green", no_wrap=True)
+
+        # Criação linhas
+        for emprestimo in self.__emprestimos:
+            if usuario.__eq__(emprestimo.usuario):
+                table.add_row(usuario.nome, emprestimo.obra.titulo, str(emprestimo.data_retirada))
+        
+        return table
