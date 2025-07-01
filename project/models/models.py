@@ -27,7 +27,7 @@ class Obra(BaseEntity):
 
     def disponivel(self, estoque):
         for obra_acervo in estoque:
-            if obra_acervo["obra"].__eq__(self): return True
+            if obra_acervo["obra"] == self: return True
         return False
         
     def __str__(self):
@@ -81,7 +81,7 @@ class Acervo:
 
         if obra.disponivel(self.acervo):
             for obra_acervo in self.acervo:
-                if obra_acervo["obra"].__eq__(obra):
+                if obra_acervo["obra"] == obra:
                     return obra_acervo
         return False
 
@@ -90,7 +90,7 @@ class Acervo:
         if obra_acervo:
             if obra.quantidade >= 1:
                 obra.quantidade -= 1
-                obra_acervo["estoque"] +=1
+                obra_acervo["estoque"] += 1
                 return self
             return "Sem obra disponível."
         
@@ -194,7 +194,7 @@ class Acervo:
 
         # Criação linhas
         for emprestimo in self.__emprestimos:
-            if usuario.__eq__(emprestimo.usuario):
+            if usuario == emprestimo.usuario:
                 table.add_row(usuario.nome, emprestimo.obra.titulo, str(emprestimo.data_retirada))
         
         return table
